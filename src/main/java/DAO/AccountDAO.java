@@ -2,7 +2,6 @@ package DAO;
 
 import Model.Account;
 import Util.ConnectionUtil;
-
 import java.sql.*;
 
 public class AccountDAO {
@@ -26,13 +25,8 @@ public class AccountDAO {
             }
         }
     }
-    
 
     public Account createAccount(Account account) throws SQLException {
-        if (account.getUsername().isEmpty() || account.getPassword().length() < 4) {
-            throw new SQLException("Invalid username or password.");
-        }
-
         String sql = "INSERT INTO account (username, password) VALUES (?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, account.getUsername());
@@ -41,7 +35,7 @@ public class AccountDAO {
 
             try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {
-                    account.setAccount_id(rs.getInt(1));  
+                    account.setAccount_id(rs.getInt(1));
                 }
             }
             return account;
@@ -82,6 +76,7 @@ public class AccountDAO {
         return null;
     }
 }
+
 
 
 

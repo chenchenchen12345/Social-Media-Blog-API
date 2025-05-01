@@ -81,20 +81,6 @@ public class SocialMediaController {
     public void createMessage(Context ctx) {
         try {
             Message message = ctx.bodyAsClass(Message.class);
-    
-            // message text not empty, less than 255 chars
-            String text = message.getMessage_text();
-            if (text == null || text.trim().isEmpty() || text.length() > 255) {
-                ctx.status(400).result("");
-                return;
-            }
-    
-            // user exists?
-            if (accountService.getAccountById(message.getPosted_by()) == null) {
-                ctx.status(400).result("");
-                return;
-            }
-    
             Message created = messageService.createMessage(message);
             if (created != null) {
                 ctx.status(200).json(created);

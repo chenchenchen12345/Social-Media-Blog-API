@@ -2,7 +2,7 @@ package Service;
 
 import DAO.AccountDAO;
 import Model.Account;
-import java.sql.SQLException;  
+import java.sql.SQLException;
 
 public class AccountService {
 
@@ -18,14 +18,23 @@ public class AccountService {
 
     public Account registerUser(Account account) {
         try {
-            if (accountDAO.usernameExists(account.getUsername())) {
+            if (account.getUsername() == null || account.getUsername().trim().isEmpty()) {
+                System.out.println("Username cannot be empty.");
                 return null;
             }
+
+            if (account.getPassword() == null || account.getPassword().length() < 4) {
+                System.out.println("Password must be at least 4 characters long.");
+                return null;
+            }
+
+            if (accountDAO.usernameExists(account.getUsername())) {
+                System.out.println("Username already exists.");
+                return null;
+            }
+
             return accountDAO.createAccount(account);
-        } catch (SQLException e) {  
-            e.printStackTrace();
-            return null;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
@@ -37,9 +46,7 @@ public class AccountService {
             if (existingAccount != null && existingAccount.getPassword().equals(account.getPassword())) {
                 return existingAccount;
             }
-        } catch (SQLException e) {  
-            e.printStackTrace();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
@@ -49,6 +56,7 @@ public class AccountService {
         return accountDAO.getAccountById(id);
     }
 }
+
 
 
 

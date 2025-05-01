@@ -8,13 +8,16 @@ import java.util.List;
 public class MessageService {
 
     private MessageDAO messageDAO;
+    private AccountService accountService; 
 
     public MessageService() {
         this.messageDAO = new MessageDAO();
+        this.accountService = new AccountService();
     }
 
-    public MessageService(MessageDAO messageDAO) {
+    public MessageService(MessageDAO messageDAO, AccountService accountService) {
         this.messageDAO = messageDAO;
+        this.accountService = accountService;
     }
 
     public Message createMessage(Message message) {
@@ -25,14 +28,20 @@ public class MessageService {
             if (message.getMessage_text().length() > 255) {
                 throw new IllegalArgumentException("Message text cannot be longer than 255 characters");
             }
+            if (message.getPosted_by() <= 0) {
+                throw new IllegalArgumentException("Posted_by must be a positive user ID");
+            }
+            if (accountService.getAccountById(message.getPosted_by()) == null) {
+                throw new IllegalArgumentException("User does not exist");
+            }
 
-        return messageDAO.createMessage(message);
-    } catch (IllegalArgumentException e) {
-        e.printStackTrace();
-        return null;
-    } catch (Exception e) {
-        e.printStackTrace();
-        return null;
+            return messageDAO.createMessage(message);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
